@@ -1,7 +1,9 @@
 //creates a Nodelist of all the card elements
-const cards = document.querySelectorAll('.card');
+let cards = document.querySelectorAll('.card');
+
 //creates an array from the above Nodelist
 let gameCards = Array.from(cards);
+
 //accesses the deck element
 let deck = document.getElementsByClassName('deck');
 
@@ -23,50 +25,50 @@ function shuffle(array) {
     return array;
 }
 
-
+//Begin the game by shuffling and reassigning HTML
 function firstTurn() {
   shuffle(gameCards);
-  for (i = 0; i <= len; i++){
-    deck.innerHTML = gameCards[i];
+  for (i = 0; i < gameCards; i++){
+    cards[i].innerHTML = gameCards[i].innerHTML;
   }
+  turn();
 }
 
 firstTurn();
-//function newGame() {
-//  shuffle(gameCards);
-//  for (const gameCard of gameCards) {
 
-//  }
-//}
-
-
-let twoCards = [];
-
-//function firstTurn() {
-//  document.getElementById('reset').addEventListener('click', shuffle(gameCards));
-//  deck.append(gameCards);
-//}
-
-//firstTurn();
-
+//This determines behavior for each turn
 function turn() {
-  let arrayCount = 0;
   for (const card of cards) {
       card.addEventListener('click', function(event) {
-        if (arrayCount < 2) {
           event.currentTarget.classList.add("show", "open");
-          twoCards.push(this.children);
-          arrayCount += 1;
-        }
       });
   }
-  let newTwo = Array.from('twoCards');
 }
 
+//Just for checking the contents of the gameCards array
+function innerGameCards(){
+  for (const gameCard of gameCards){
+    console.log(gameCard.innerHTML);
+  }
+}
+innerGameCards();
 
-//document.getElementsByClassName('reset').addEventListener('click', firstTurn);
+//If the turn results in a match, this match function is invoked
+//and the 'match' class is added to the two cards' elements. Then
+//it should loop through all of the cards to see if they all possess
+//the 'match' class. If they do, the end() function is invoked. If
+//they don't, the twoCard array is emptied and the turn() function is
+//invoked.
+function match() {
+  turn();
+}
+//If the turn results in no match, this noMatch function is invoked
+//and the 'show' and 'open' classes are removed from the two cards'
+//elements. And the twoCard array is emptied.
+function noMatch() {
+  turn();
+}
 
-//turn();
 
 //Create the clock
 var active = false;
@@ -118,21 +120,6 @@ function reset() {
  * Create a list that holds all of your cards
  */
 
-function match() {
-  let cardOne = twoCards[0];
-  let cardTwo = twoCards[1];
-  cardOne.parentElement.classList.add("match");
-  cardTwo.parentElement.classList.add("match");
-  twoCards.splice(0, 2);
-  turn();
-}
-
-function noMatch() {
-  cardOne.parentElement.classList.remove("show", "open");
-  cardTwo.parentElement.classList.remove("show", "open");
-  twoCards.splice(0, 2);
-  turn();
-}
 
 
 //function closeCard() {
