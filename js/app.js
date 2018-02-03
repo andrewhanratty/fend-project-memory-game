@@ -28,7 +28,7 @@ function shuffle(array) {
 //Begin the game by shuffling and reassigning HTML
 function firstTurn() {
   shuffle(gameCards);
-  for (i = 0; i < gameCards; i++){
+  for (i = 0; i < len; i++){
     cards[i].innerHTML = gameCards[i].innerHTML;
   }
   turn();
