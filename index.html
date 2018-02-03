@@ -6,6 +6,7 @@
     <meta name="description" content="">
     <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Coda">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -24,9 +25,9 @@
 
         	<span class="moves">3</span> Moves
 
-            <div class="restart">
-        		<i class="fa fa-repeat"></i>
-        	</div>
+          <button id="control" onclick="changeState();">Start</button>
+          <button class="reset" onclick="reset();">Reset</button>
+          <label id="my_timer">00:00</label>
         </section>
 
         <ul class="deck">
@@ -39,10 +40,10 @@
             <li class="card match">
                 <i class="fa fa-anchor"></i>
             </li>
-            <li class="card">
+            <li class="card show">
                 <i class="fa fa-bolt"></i>
             </li>
-            <li class="card">
+            <li class="card show">
                 <i class="fa fa-cube"></i>
             </li>
             <li class="card match">
@@ -66,7 +67,7 @@
             <li class="card">
                 <i class="fa fa-bomb"></i>
             </li>
-            <li class="card open show">
+            <li class="card open">
                 <i class="fa fa-bolt"></i>
             </li>
             <li class="card">
