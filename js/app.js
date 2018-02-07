@@ -1,57 +1,79 @@
 //creates a Nodelist of all the card elements
 let cards = document.querySelectorAll('.card');
 
-//creates an array from the above Nodelist
-let gameCards = Array.from(cards);
-
 //accesses the deck element
 let deck = document.getElementsByClassName('deck');
 
 const len = cards.length;
 
+let moveCount = 0;
+
+let twoCards = [];
+
+var listCards = ["fa fa-diamond","fa fa-paper-plane-o", "fa fa-anchor",
+                "fa fa-bolt", "fa fa-cube", "fa fa-anchor", "fa fa-leaf",
+                "fa fa-bicycle", "fa fa-diamond", "fa fa-bomb", "fa fa-leaf",
+                "fa fa-bomb", "fa fa-bolt", "fa fa-bicycle",
+                "fa fa-paper-plane-o", "fa fa-cube"];
+
 let shuffledCards = [];
-//
+
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+  var currentIndex = array.length, temporaryValue, randomIndex;
 
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
-
-//Begin the game by shuffling and reassigning HTML
-function firstTurn() {
-  shuffle(gameCards);
-  for (i = 0; i < len; i++){
-    cards[i].innerHTML = gameCards[i].innerHTML;
+  while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
   }
-  turn();
+
+  return array;
 }
 
-firstTurn();
+function shuffle_cards(array) {
+  var list = $(".deck li");
+  for(var i = 0; i < list.length; i++) {
+    var curr = list[i];
+    //access all of the <i> elements in the '.deck li' list.
+    //sets the class within that element to whatever's at the specified
+    //index of the input array.
+    curr = curr.getElementsByTagName("i")[0].setAttribute("class", array[i]);
+    console.log(curr);
+  }
+}
+
+function compare() {
+  if (twoCards[0] == twoCards[1]) {
+    for (const twoCard of twoCards) {
+      twoCard.parentElement.classList.add('match');
+      twoCard.parentElement.classList.remove('open', 'show');
+    }
+  } else {
+    for (const twoCard of twoCards) {
+      twoCard.parentElement.classList.remove('open', 'show');
+    }
+  }
+}
+
 
 //This determines behavior for each turn
 function turn() {
-  for (const card of cards) {
-      card.addEventListener('click', function(event) {
-          event.currentTarget.classList.add("show", "open");
-      });
+  for (i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('click', function(event) {
+      event.currentTarget.classList.add("show", "open");
+      moveCount++;
+      twoCards.push(this.innerHTML.trim());
+      if (twoCards.length == 2) {
+        compare();
+      }
+    });
   }
 }
 
-//Just for checking the contents of the gameCards array
-function innerGameCards(){
-  for (const gameCard of gameCards){
-    console.log(gameCard.innerHTML);
-  }
-}
-innerGameCards();
+turn();
+
 
 //If the turn results in a match, this match function is invoked
 //and the 'match' class is added to the two cards' elements. Then
@@ -60,12 +82,18 @@ innerGameCards();
 //they don't, the twoCard array is emptied and the turn() function is
 //invoked.
 function match() {
+  for(const twoCard of twoCards) {
+    twoCard.classList.add('match');
+  }
   turn();
 }
 //If the turn results in no match, this noMatch function is invoked
 //and the 'show' and 'open' classes are removed from the two cards'
 //elements. And the twoCard array is emptied.
 function noMatch() {
+  for (const twoCard of twoCards) {
+    card.classList.remove('show', 'open');
+  }
   turn();
 }
 
@@ -113,45 +141,23 @@ function changeState() {
 
 function reset() {
   document.getElementById('my_timer').innerHTML = "00" + ":" + "00";
+  document.querySelector('.reset').addEventListener('click', function() {
+//turns all of the cards back over and then shuffles them.
+    for (const card of cards) {
+      card.classList.remove('show', 'open', 'match');
+    //takes the listCards array and shuffles it
+    }
+    listCards = shuffle(listCards);
+    //passes the newly shuffled listCards array into shuffle_cards, which
+    //newly assigns classes within each '.deck li' (each card)
+    shuffle_cards(listCards);
+  });
 }
 
 
 /*
  * Create a list that holds all of your cards
  */
-
-
-
-//function closeCard() {
-//  for (const card of cards) {
-//    card.addEventListener('click', function(event) {
-//      if (card.classList.contains("show", "open")) {
-//        event.currentTarget.classList.remove("show", "open");
-//      }
-//    });
-//  }
-//}
-//closeCard();
-
-//function shuffle() {
-//  var cardList = document.querySelectorAll('.card'), i;
-//  for (i = cardList.length; i >= 0; i--) {
-//      cardList.appendChild(cardList.children[Math.random() * i | 0]);
-//  }
-//}
-
-// cards.addEventListener('click', openCard);
-
-//function shuffle(array) {
-//    for (let i = array.length - 1; i > 0; i--) {
-//        let j = Math.floor(Math.random() * (i + 1));
-//        [array[i], array[j]] = [array[j], array[i]];
-//    }
-//    return array;
-//}
-// Shuffle function from http://stackoverflow.com/a/2450976
-
-
 
 /*
  * Display the cards on the page
