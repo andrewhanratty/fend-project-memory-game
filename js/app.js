@@ -44,32 +44,55 @@ function shuffle_cards(array) {
   }
 }
 
+//compares the 2 cards in the twoCards array.
 function compare() {
+  //check to see if the cards match
   if (twoCards[0] == twoCards[1]) {
-    for (const twoCard of twoCards) {
-      twoCard.parentElement.classList.add('match');
-      twoCard.parentElement.classList.remove('open', 'show');
+    //loop through the cards and find the two that contain the same
+    //HTML as twoCards[0] and twoCards[1], then add and remove certain classes
+    //for the card's <li> element.
+    for (const card of cards) {
+      if (card.innerHTML.includes(twoCards[0] || twoCards[1])) {
+        card.classList.add('match');
+        card.classList.remove('open', 'show');
+      }
+      twoCards.pop();
     }
   } else {
-    for (const twoCard of twoCards) {
-      twoCard.parentElement.classList.remove('open', 'show');
+      for (const card of cards) {
+        if (card.innerHTML.includes(twoCards[0] || twoCards[1])) {
+          card.classList.remove('open', 'show');
+      }
+      twoCards.pop();
+      }
     }
   }
-}
 
-
-//This determines behavior for each turn
+//This determines behavior for each turn: first check for length of the twoCards array,
+//then listen for click events on any of the cards. If clicked, add classes to it
+//that will show the symbol and change card color, increment the move counter,
+//and push the innerHTML of the clicked cards into the twoCards array.
 function turn() {
   for (i = 0; i < cards.length; i++) {
+    if (twoCards.length === 2) {
+      break;
+    }
+    //This shows the clicked card's symbol and changes its color, then
+    //increments moveCount, and pushes the cards info into the twoCards array.
     cards[i].addEventListener('click', function(event) {
       event.currentTarget.classList.add("show", "open");
       moveCount++;
       twoCards.push(this.innerHTML.trim());
-      if (twoCards.length == 2) {
-        compare();
-      }
     });
   }
+  //This is meant to prevent the user from being able to click on more than
+  //2 cards/turn
+  for (i = 0; i < cards.length; i++) {
+    cards[i].removeEventListener('click', function(event) {
+      event.currentTarget.classList.add("show", "open");
+    });
+  }
+  compare();
 }
 
 turn();
