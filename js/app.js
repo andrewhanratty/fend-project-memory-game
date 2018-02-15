@@ -1,22 +1,50 @@
-//creates a Nodelist of all the card elements
-let cards = document.querySelectorAll('.card');
 
-//accesses the deck element
-let deck = document.getElementsByClassName('deck');
-
-const len = cards.length;
+var match_list = [];
+let card1, card2;
 
 let moveCount = 0;
-
+let shuffledCards = [];
 let twoCards = [];
 
-var listCards = ["fa fa-diamond","fa fa-paper-plane-o", "fa fa-anchor",
+var listCards = ["fa fa-diamond", "fa fa-paper-plane-o", "fa fa-anchor",
                 "fa fa-bolt", "fa fa-cube", "fa fa-anchor", "fa fa-leaf",
                 "fa fa-bicycle", "fa fa-diamond", "fa fa-bomb", "fa fa-leaf",
                 "fa fa-bomb", "fa fa-bolt", "fa fa-bicycle",
                 "fa fa-paper-plane-o", "fa fa-cube"];
 
-let shuffledCards = [];
+//Creating the modal
+//Get modal element
+var modal = document.getElementById('simpleModal');
+// Get close modal button
+var closeBtn = document.getElementsByClassName('close')[0];
+
+// Function to open modal
+function endGame() {
+  modal.style.display = 'block';
+}
+// Listen for close click
+closeBtn.addEventListener('click', closeModal);
+// Listen for outside click
+window.addEventListener('click', outsideClick);
+// Function to close modal
+function closeModal() {
+  modal.style.display = 'none';
+  $("ul.deck li").removeClass("open show match");
+  listCards = shuffle(listCards);
+  shuffle_cards(listCards);
+  reset();
+}
+// Function to close modal if outside click
+function outsideClick(e) {
+  if (e.target == modal) {
+    modal.style.display = 'none';
+    $("ul.deck li").removeClass("open show match");
+    listCards = shuffle(listCards);
+    shuffle_cards(listCards);
+  }
+  reset();
+}
+
 
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
@@ -32,6 +60,8 @@ function shuffle(array) {
   return array;
 }
 
+
+//Shuffles the cards by changing the class in every card's <i> element
 function shuffle_cards(array) {
   var list = $(".deck li");
   for(var i = 0; i < list.length; i++) {
@@ -44,81 +74,51 @@ function shuffle_cards(array) {
   }
 }
 
+
+
+
 //compares the 2 cards in the twoCards array.
-function compare() {
-  //check to see if the cards match
-  if (twoCards[0] == twoCards[1]) {
-    //loop through the cards and find the two that contain the same
-    //HTML as twoCards[0] and twoCards[1], then add and remove certain classes
-    //for the card's <li> element.
-    for (const card of cards) {
-      if (card.innerHTML.includes(twoCards[0] || twoCards[1])) {
-        card.classList.add('match');
-        card.classList.remove('open', 'show');
-      }
-      twoCards.pop();
-    }
+function isMatch() {
+  let card1 = $(twoCards[0]).children('i').attr('class');
+  let card2 = $(twoCards[1]).children('i').attr('class');
+  console.log("card1:", card1);
+  console.log("card2:", card2);
+  if (card1 === card2) {
+    console.log("match card");
+    $(twoCards[0]).addClass("match");
+    $(twoCards[1]).addClass("match");
+    match_list.push(twoCards[0]);
+    match_list.push(twoCards[1]);
   } else {
-      for (const card of cards) {
-        if (card.innerHTML.includes(twoCards[0] || twoCards[1])) {
-          card.classList.remove('open', 'show');
-      }
-      twoCards.pop();
-      }
+    console.log("mismatch card");
+    $(twoCards[0]).removeClass("open show");
+    $(twoCards[1]).removeClass("open show");
+  }
+  if (match_list.length === 16) {
+    endGame();
+  } else {
+    twoCards.length = 0;
+  }
+  return;
+}
+
+//This determines behavior for each turn: access the deck and its <li> children,
+//then listen for click events on any of the cards. If clicked, push the card
+//to the twoCards array and add classes 'show' and 'open' to its element.
+//increment the move counter.
+$(document).ready(function() {
+  $("ul.deck li").click(function() {
+    twoCards.push(this);
+    $(this).addClass("show open");
+    console.log(twoCards);
+    if(twoCards.length === 2) {
+      //The setTimeout() method calls the isMatch function after a specified
+      //number of milliseconds. 1000 = 1 second
+      setTimeout(isMatch, 1000);
     }
-  }
-
-//This determines behavior for each turn: first check for length of the twoCards array,
-//then listen for click events on any of the cards. If clicked, add classes to it
-//that will show the symbol and change card color, increment the move counter,
-//and push the innerHTML of the clicked cards into the twoCards array.
-function turn() {
-  for (i = 0; i < cards.length; i++) {
-    if (twoCards.length === 2) {
-      break;
-    }
-    //This shows the clicked card's symbol and changes its color, then
-    //increments moveCount, and pushes the cards info into the twoCards array.
-    cards[i].addEventListener('click', function(event) {
-      event.currentTarget.classList.add("show", "open");
-      moveCount++;
-      twoCards.push(this.innerHTML.trim());
-    });
-  }
-  //This is meant to prevent the user from being able to click on more than
-  //2 cards/turn
-  for (i = 0; i < cards.length; i++) {
-    cards[i].removeEventListener('click', function(event) {
-      event.currentTarget.classList.add("show", "open");
-    });
-  }
-  compare();
-}
-
-turn();
-
-
-//If the turn results in a match, this match function is invoked
-//and the 'match' class is added to the two cards' elements. Then
-//it should loop through all of the cards to see if they all possess
-//the 'match' class. If they do, the end() function is invoked. If
-//they don't, the twoCard array is emptied and the turn() function is
-//invoked.
-function match() {
-  for(const twoCard of twoCards) {
-    twoCard.classList.add('match');
-  }
-  turn();
-}
-//If the turn results in no match, this noMatch function is invoked
-//and the 'show' and 'open' classes are removed from the two cards'
-//elements. And the twoCard array is emptied.
-function noMatch() {
-  for (const twoCard of twoCards) {
-    card.classList.remove('show', 'open');
-  }
-  turn();
-}
+    console.log(match_list);
+  });
+});
 
 
 //Create the clock
@@ -166,10 +166,8 @@ function reset() {
   document.getElementById('my_timer').innerHTML = "00" + ":" + "00";
   document.querySelector('.reset').addEventListener('click', function() {
 //turns all of the cards back over and then shuffles them.
-    for (const card of cards) {
-      card.classList.remove('show', 'open', 'match');
+    $("ul.deck li").removeClass("open show match");
     //takes the listCards array and shuffles it
-    }
     listCards = shuffle(listCards);
     //passes the newly shuffled listCards array into shuffle_cards, which
     //newly assigns classes within each '.deck li' (each card)
