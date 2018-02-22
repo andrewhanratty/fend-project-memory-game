@@ -19,12 +19,13 @@
 
         <section class="score-panel">
         	<ul class="stars">
-        		<li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
+        		<li><i class="fa first fa-star"></i></li>
+        		<li><i class="fa second fa-star"></i></li>
+        		<li><i class="fa third fa-star"></i></li>
         	</ul>
 
-        	<span class="moves">0</span> Moves
+        	<span class="moves">0</span>
+          <span class="move_text">Moves</span>
 
           <button id="control" onclick="changeState();">Start</button>
           <button class="reset" onclick="reset();">Reset</button>
@@ -84,9 +85,9 @@
         <footer>
           <div id="simpleModal" class="modal">
             <div class="modal-content">
-              <span class="close">&times;</span>
-              <p>Congratulations! You matched all of the cards.</p>
-              <p>If you'd like to play again, just click the close button.</p>
+              <span class="close">X</span>
+              <p>Congratulations!</p>
+              <p class="moves_num">0</p>
             </div>
           </div>
         </footer>
