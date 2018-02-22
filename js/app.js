@@ -3,8 +3,20 @@ var match_list = [];
 let card1, card2;
 
 let moveCount = 0;
+let count = document.querySelector('.moves');
+let cText = document.querySelector('.move_text');
+let movesNum = document.querySelector('.moves_num');
+
 let shuffledCards = [];
 let twoCards = [];
+
+let firstStar = document.querySelector('.first');
+let secondStar = document.querySelector('.second');
+let thirdStar = document.querySelector('.third');
+
+let timeCount = document.querySelector('label').innerHTML;
+
+let starRating = 3;
 
 var listCards = ["fa fa-diamond", "fa fa-paper-plane-o", "fa fa-anchor",
                 "fa fa-bolt", "fa fa-cube", "fa fa-anchor", "fa fa-leaf",
@@ -20,12 +32,22 @@ var closeBtn = document.getElementsByClassName('close')[0];
 
 // Function to open modal
 function endGame() {
+  active = false;
   modal.style.display = 'block';
+  movesNum.textContent = 'You finished in ' + timeCount + '!  Earning a ' + starRating + '-star rating.';
+  let newP = document.createElement('p');
+  newP.textContent = "Click on 'X' if you'd like to play again.";
+  movesNum.appendChild(newP);
+  modal();
 }
-// Listen for close click
+// Listen for close click outside of modal
+function modal() {
+  window.addEventListener('click', outsideClick);
+}
+
+// Listen for close click on modal's X
 closeBtn.addEventListener('click', closeModal);
-// Listen for outside click
-window.addEventListener('click', outsideClick);
+
 // Function to close modal
 function closeModal() {
   modal.style.display = 'none';
@@ -74,8 +96,11 @@ function shuffle_cards(array) {
   }
 }
 
-
-
+// Shuffles the cards when the screen loads
+window.onload = function() {
+    listCards = shuffle(listCards);
+    shuffle_cards(listCards);
+};
 
 //compares the 2 cards in the twoCards array.
 function isMatch() {
@@ -102,6 +127,34 @@ function isMatch() {
   return;
 }
 
+// Count the # of moves
+function mCount() {
+  console.log("I'm counting the moves:", moveCount);
+  moveCount++;
+  // Change 'moves' from plural to singular when needed
+  count.textContent = moveCount;
+  if (moveCount == 1) {
+    cText.textContent = 'Move';
+  } else {
+    cText.textContent = 'Moves';
+  }
+}
+
+
+//Stars to remove based on number of moves
+function removeStar() {
+  if (moveCount === 22) {
+    console.log("Remove a star!");
+    firstStar.classList.remove('fa-star');
+    starRating--;
+  } else if (moveCount === 32) {
+    console.log("Remove another star!");
+    secondStar.classList.remove('fa-star');
+    starRating--;
+  }
+}
+
+
 //This determines behavior for each turn: access the deck and its <li> children,
 //then listen for click events on any of the cards. If clicked, push the card
 //to the twoCards array and add classes 'show' and 'open' to its element.
@@ -110,6 +163,8 @@ $(document).ready(function() {
   $("ul.deck li").click(function() {
     twoCards.push(this);
     $(this).addClass("show open");
+    mCount();
+    removeStar();
     console.log(twoCards);
     if(twoCards.length === 2) {
       //The setTimeout() method calls the isMatch function after a specified
@@ -119,7 +174,6 @@ $(document).ready(function() {
     console.log(match_list);
   });
 });
-
 
 //Create the clock
 var active = false;
@@ -167,6 +221,8 @@ function reset() {
   document.querySelector('.reset').addEventListener('click', function() {
 //turns all of the cards back over and then shuffles them.
     $("ul.deck li").removeClass("open show match");
+    count.textContent = 0;
+    moveCount = 0;
     //takes the listCards array and shuffles it
     listCards = shuffle(listCards);
     //passes the newly shuffled listCards array into shuffle_cards, which
