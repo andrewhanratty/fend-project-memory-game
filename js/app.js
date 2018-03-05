@@ -49,15 +49,15 @@ function closeModal() {
 }
 
 // Function to close modal if outside click
-function outsideClick() {
+//function outsideClick() {
   //if (e.target == modal) {
   //  modal.style.display = 'none';
   //}
-  reset();
-}
+//  reset();
+//}
 
 // Listen for close click outside of modal
-window.addEventListener('click', outsideClick);
+//window.addEventListener('click', outsideClick);
 
 
 // Listen for close click on modal's X
